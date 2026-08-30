@@ -1,20 +1,20 @@
-local player = game.Players.LocalPlayer
-local Players = game:GetService("Players")
-local rs = game:GetService("ReplicatedStorage")
-local Lighting = game:GetService("Lighting")
-local VIM = game:GetService("VirtualInputManager")
-local UIS = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local Workspace = game:GetService("Workspace")
-local CoreGui = game:GetService("CoreGui")
-local LogService = game:GetService("LogService")
-local SQR_BUTTON_SOUND_ID = "rbxassetid://12221967"
+player = game.Players.LocalPlayer
+Players = game:GetService("Players")
+rs = game:GetService("ReplicatedStorage")
+Lighting = game:GetService("Lighting")
+VIM = game:GetService("VirtualInputManager")
+UIS = game:GetService("UserInputService")
+TweenService = game:GetService("TweenService")
+UserInputService = game:GetService("UserInputService")
+RunService = game:GetService("RunService")
+Workspace = game:GetService("Workspace")
+CoreGui = game:GetService("CoreGui")
+LogService = game:GetService("LogService")
+SQR_BUTTON_SOUND_ID = "rbxassetid://12221967"
 
 -- Compatibility: some executors do not expose the global safeCancel() function.
 -- Use task.cancel when available and safely fall back when it is not.
-local function safeCancel(thread)
+function safeCancel(thread)
     if not thread then return end
     pcall(function()
         if task and type(task.cancel) == "function" then
@@ -27,12 +27,12 @@ local function safeCancel(thread)
     end)
 end
 
-local OWNER_LIST = {
+OWNER_LIST = {
 "nanMeWellDoit",
 "nanNeverLet"
 }
 
-local VIP_LIST = {
+VIP_LIST = {
 "VIP1","VIP2","VIP3","VIP4","VIP5","VIP6","VIP7","VIP8","VIP9","VIP10",
 "VIP11","VIP12","VIP13","VIP14","VIP15","VIP16","VIP17","VIP18","VIP19","VIP20",
 "VIP21","VIP22","VIP23","VIP24","VIP25","VIP26","VIP27","VIP28","VIP29","VIP30",
@@ -42,15 +42,15 @@ local VIP_LIST = {
 "VIP61","VIP62","VIP63","VIP64","VIP65","VIP66","VIP67","VIP68","VIP69","VIP70"
 }
 
-local BAN_LIST = {
+BAN_LIST = {
 "Ban1","Ban2","Ban3","Ban4","Ban5","Ban6","Ban7","Ban8","Ban9","Ban10",
 "Ban11","Ban12","Ban13","Ban14","Ban15","Ban16","Ban17","Ban18","Ban19","Ban20",
 "Ban21","Ban22","Ban23","Ban24","Ban25","Ban26","Ban27","Ban28","Ban29","Ban30"
 }
 
-local isOwner = false
-local isVIP = false
-local isBanned = false
+isOwner = false
+isVIP = false
+isBanned = false
 
 for _, name in ipairs(OWNER_LIST) do
 if player.Name == name then isOwner = true end
@@ -62,7 +62,7 @@ for _, name in ipairs(BAN_LIST) do
 if player.Name == name then isBanned = true end
 end
 
-local function isPlayerOwner(plr)
+function isPlayerOwner(plr)
 if not plr then return false end
 for _, name in ipairs(OWNER_LIST) do
 if plr.Name == name then return true end
@@ -70,7 +70,7 @@ end
 return false
 end
 
-local function isPlayerVIP(plr)
+function isPlayerVIP(plr)
 if not plr then return false end
 if isPlayerOwner(plr) then return true end
 for _, name in ipairs(VIP_LIST) do
@@ -79,14 +79,14 @@ end
 return false
 end
 
-local function KickPlayer(plr, reason)
+function KickPlayer(plr, reason)
 if not plr then return end
 pcall(function()
 plr:Kick(reason or "Kicked")
 end)
 end
 
-local function ApplyLag(plr)
+function ApplyLag(plr)
 if not plr then return end
 spawn(function()
 local startTime = os.clock()
@@ -101,7 +101,7 @@ end
 end)
 end
 
-local function sendCommand(cmd)
+function sendCommand(cmd)
 if cmd == "" then return end
 pcall(function()
 local remote = rs:FindFirstChild("HDAdminHDClient")
@@ -132,7 +132,7 @@ end)
 end
 
 -- رسائل من سكربت (بدون إطارات)
-local function ShowScriptMessage(message, duration)
+function ShowScriptMessage(message, duration)
 duration = duration or 5
 
 local msgGui = Instance.new("ScreenGui")  
@@ -186,11 +186,11 @@ end)
 
 end
 
-local function ShowPopupMessage(message, duration, textColor, avatarId)
+function ShowPopupMessage(message, duration, textColor, avatarId)
 ShowScriptMessage(message, duration)
 end
 
-local function addButtonFeedback(btn)
+function addButtonFeedback(btn)
 if not btn or not btn:IsA("GuiButton") then return end
 if btn:GetAttribute("SQRFeedback") then return end
 btn:SetAttribute("SQRFeedback", true)
@@ -210,7 +210,7 @@ down.Completed:Connect(function() if btn and btn.Parent then up:Play() end end)
 end)
 end
 
-local function installButtonFeedback(root)
+function installButtonFeedback(root)
 if not root then return end
 for _, obj in ipairs(root:GetDescendants()) do
 if obj:IsA("GuiButton") then addButtonFeedback(obj) end
@@ -230,19 +230,19 @@ player:Kick("Reason : Banned from using this script")
 return
 end
 
-local BangActive, HeadBangActive = false, false
-local bangTask, headbangTask = nil, nil
-local danceAnimationTrack = nil
-local BangSpeed, BangDistance, BangHeight, BangOscillation = 3, 200, 0, 1.5
-local HeadBangSpeed, HeadBangDistance, HeadBangHeight, HeadBangOscillation = 3, 200, 0, 1.5
-local OriginalPositions = {}
+BangActive, HeadBangActive = false, false
+bangTask, headbangTask = nil, nil
+danceAnimationTrack = nil
+BangSpeed, BangDistance, BangHeight, BangOscillation = 3, 200, 0, 1.5
+HeadBangSpeed, HeadBangDistance, HeadBangHeight, HeadBangOscillation = 3, 200, 0, 1.5
+OriginalPositions = {}
 
-local function SaveOriginalPosition(name)
+function SaveOriginalPosition(name)
 local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 if playerRoot then OriginalPositions[name] = playerRoot.CFrame end
 end
 
-local function RestoreOriginalPosition(name)
+function RestoreOriginalPosition(name)
 local position = OriginalPositions[name]
 if position then
 local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
@@ -253,7 +253,7 @@ end
 end
 end
 
-local function PlayDanceAnimation(speed)
+function PlayDanceAnimation(speed)
 local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
 if humanoid then
 local animator = humanoid:FindFirstChildOfClass("Animator")
@@ -268,14 +268,14 @@ end
 end
 end
 
-local function StopDanceAnimation()
+function StopDanceAnimation()
 if danceAnimationTrack then
 danceAnimationTrack:Stop()
 danceAnimationTrack = nil
 end
 end
 
-local function StartBang(targetPlayer)
+function StartBang(targetPlayer)
 if BangActive or not targetPlayer then return end
 BangActive = true
 SaveOriginalPosition("Bang")
@@ -313,7 +313,7 @@ RestoreOriginalPosition("Bang")
 end)
 end
 
-local function StartHeadBang(targetPlayer)
+function StartHeadBang(targetPlayer)
 if HeadBangActive or not targetPlayer then return end
 HeadBangActive = true
 SaveOriginalPosition("HeadBang")
@@ -353,7 +353,7 @@ RestoreOriginalPosition("HeadBang")
 end)
 end
 
-local function StopBang()
+function StopBang()
 BangActive, HeadBangActive = false, false
 if bangTask then bangTask = nil end
 if headbangTask then headbangTask = nil end
@@ -370,10 +370,10 @@ elseif HeadBangActive then PlayDanceAnimation(HeadBangSpeed) end
 end
 end)
 
-local AntiAFK = false
-local afkConnection = nil
+AntiAFK = false
+afkConnection = nil
 
-local function EnableAntiAFK()
+function EnableAntiAFK()
 if AntiAFK then return end
 AntiAFK = true
 afkConnection = player.Idled:Connect(function()
@@ -392,7 +392,7 @@ end
 end)
 end
 
-local function DisableAntiAFK()
+function DisableAntiAFK()
 AntiAFK = false
 if afkConnection then
 afkConnection:Disconnect()
@@ -400,7 +400,7 @@ afkConnection = nil
 end
 end
 
-local function getNearPlayers()
+function getNearPlayers()
 local near = {}
 local char = player.Character
 if not char then return near end
@@ -420,20 +420,20 @@ end
 return near
 end
 
-local playerGui = player:WaitForChild("PlayerGui")
+playerGui = player:WaitForChild("PlayerGui")
 
-local oldGui = playerGui:FindFirstChild("DeltaFloatingButton")
+oldGui = playerGui:FindFirstChild("DeltaFloatingButton")
 if oldGui then oldGui:Destroy() end
 
 -- واجهة مستخدم
-local gui = Instance.new("ScreenGui")
+gui = Instance.new("ScreenGui")
 gui.Name = "DeltaFloatingButton"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = playerGui
 
-local button = Instance.new("ImageButton")
+button = Instance.new("ImageButton")
 button.Name = "FloatingButton"
 button.Size = UDim2.fromOffset(55, 55)
 button.Position = UDim2.new(0.02, 0, 0.4, 0)
@@ -446,10 +446,10 @@ button.AutoButtonColor = true
 button.ZIndex = 999
 button.Parent = gui
 
-local dragging = false
-local dragStart
-local startPos
-local dragInput
+dragging = false
+dragStart
+startPos
+dragInput
 
 button.InputBegan:Connect(function(input)
 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -483,13 +483,13 @@ end
 end)
 
 -- الواجهة الرئيسية
-local screenGui = Instance.new("ScreenGui")
+screenGui = Instance.new("ScreenGui")
 screenGui.Name = "SQR_UI"
 screenGui.ResetOnSpawn = false
 screenGui.Enabled = false
 screenGui.Parent = playerGui
 
-local mainFrame = Instance.new("Frame")
+mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 620, 0, 620)
 mainFrame.Position = UDim2.new(0.5, -310, 0.5, -310)
 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -501,7 +501,7 @@ mainFrame.ClipsDescendants = true
 mainFrame.Visible = false
 mainFrame.Parent = screenGui
 
-local bgImage = Instance.new("ImageLabel")
+bgImage = Instance.new("ImageLabel")
 bgImage.Size = UDim2.new(1, 0, 1, 0)
 bgImage.BackgroundTransparency = 1
 bgImage.BorderSizePixel = 0
@@ -510,7 +510,7 @@ bgImage.ImageTransparency = 0.5
 bgImage.ScaleType = Enum.ScaleType.Crop
 bgImage.Parent = mainFrame
 
-local overlayFrame = Instance.new("Frame")
+overlayFrame = Instance.new("Frame")
 overlayFrame.Size = UDim2.new(1, 0, 1, 0)
 overlayFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 overlayFrame.BackgroundTransparency = 0.3
@@ -521,7 +521,7 @@ overlayFrame.Parent = mainFrame
 bgImage.ZIndex = 0
 overlayFrame.ZIndex = 0
 
-local mainCorner = Instance.new("UICorner")
+mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 16)
 mainCorner.Parent = mainFrame
 
@@ -550,7 +550,7 @@ end
 end)
 
 -- عنوان
-local centerTitle = Instance.new("TextLabel")
+centerTitle = Instance.new("TextLabel")
 centerTitle.Size = UDim2.new(1, 0, 0.06, 0)
 centerTitle.Position = UDim2.new(0, 0, 0.02, 0)
 centerTitle.BackgroundTransparency = 1
@@ -563,7 +563,7 @@ centerTitle.Font = Enum.Font.SourceSansBold
 centerTitle.TextXAlignment = Enum.TextXAlignment.Center
 centerTitle.Parent = mainFrame
 
-local titleLine = Instance.new("Frame")
+titleLine = Instance.new("Frame")
 titleLine.Size = UDim2.new(0.2, 0, 0, 2)
 titleLine.Position = UDim2.new(0.4, 0, 0.085, 0)
 titleLine.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
@@ -573,7 +573,7 @@ titleLine.Parent = mainFrame
 Instance.new("UICorner", titleLine).CornerRadius = UDim.new(1, 0)
 
 -- الشريط الجانبي
-local sidebar = Instance.new("Frame")
+sidebar = Instance.new("Frame")
 sidebar.Size = UDim2.new(0, 125, 1, -40)
 sidebar.Position = UDim2.new(0, 0, 0, 40)
 sidebar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -582,7 +582,7 @@ sidebar.BorderSizePixel = 0
 sidebar.ZIndex = 3
 sidebar.Parent = mainFrame
 
-local sections = {"Spam 1", "Target", "HD", "Anti", "Near", "SQR"}
+sections = {"Spam 1", "Target", "HD", "Anti", "Near", "SQR"}
 
 if isVIP or isOwner then
 table.insert(sections, "VIP")
@@ -592,9 +592,9 @@ table.insert(sections, "Owner")
 end
 table.insert(sections, "Setting")
 
-local sectionButtons = {}
-local sectionFrames = {}
-local currentSection = 1
+sectionButtons = {}
+sectionFrames = {}
+currentSection = 1
 
 for i, name in ipairs(sections) do
 local btn = Instance.new("TextButton")
@@ -645,9 +645,9 @@ end)
 end
 
 -- Spam 1
-local sf1 = sectionFrames[1]
+sf1 = sectionFrames[1]
 
-local msgBox = Instance.new("TextBox")
+msgBox = Instance.new("TextBox")
 msgBox.Size = UDim2.new(1, -20, 0.15, 0)
 msgBox.Position = UDim2.new(0, 10, 0.05, 0)
 msgBox.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
@@ -661,7 +661,7 @@ msgBox.TextSize = 18
 msgBox.Parent = sf1
 Instance.new("UICorner", msgBox).CornerRadius = UDim.new(0, 10)
 
-local speedBox1 = Instance.new("TextBox")
+speedBox1 = Instance.new("TextBox")
 speedBox1.Size = UDim2.new(0.35, 0, 0.12, 0)
 speedBox1.Position = UDim2.new(0.05, 0, 0.25, 0)
 speedBox1.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
@@ -675,7 +675,7 @@ speedBox1.TextSize = 16
 speedBox1.Parent = sf1
 Instance.new("UICorner", speedBox1).CornerRadius = UDim.new(0, 10)
 
-local sendButton1 = Instance.new("TextButton")
+sendButton1 = Instance.new("TextButton")
 sendButton1.Size = UDim2.new(0.35, 0, 0.12, 0)
 sendButton1.Position = UDim2.new(0.55, 0, 0.25, 0)
 sendButton1.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
@@ -687,10 +687,10 @@ sendButton1.Font = Enum.Font.SourceSansBold
 sendButton1.Parent = sf1
 Instance.new("UICorner", sendButton1).CornerRadius = UDim.new(0, 10)
 
-local isRunning1 = false
-local loop1 = nil
+isRunning1 = false
+loop1 = nil
 
-local function startSpam1()
+function startSpam1()
 if isRunning1 then return end
 local msg = msgBox.Text
 if msg == "" then return end
@@ -719,7 +719,7 @@ end
 end)
 end
 
-local function stopSpam1()
+function stopSpam1()
 if not isRunning1 then return end
 isRunning1 = false
 if loop1 then safeCancel(loop1) end
@@ -732,9 +732,9 @@ if isRunning1 then stopSpam1() else startSpam1() end
 end)
 
 -- Target
-local sf3 = sectionFrames[table.find(sections, "Target")]
+sf3 = sectionFrames[table.find(sections, "Target")]
 
-local searchBox = Instance.new("TextBox")
+searchBox = Instance.new("TextBox")
 searchBox.Size = UDim2.new(1, -20, 0.12, 0)
 searchBox.Position = UDim2.new(0, 10, 0.02, 0)
 searchBox.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
@@ -748,7 +748,7 @@ searchBox.TextSize = 16
 searchBox.Parent = sf3
 Instance.new("UICorner", searchBox).CornerRadius = UDim.new(0, 10)
 
-local nameLabel = Instance.new("TextLabel")
+nameLabel = Instance.new("TextLabel")
 nameLabel.Size = UDim2.new(1, 0, 0.06, 0)
 nameLabel.Position = UDim2.new(0, 0, 0.18, 0)
 nameLabel.BackgroundTransparency = 1
@@ -759,7 +759,7 @@ nameLabel.TextScaled = true
 nameLabel.Font = Enum.Font.SourceSansBold
 nameLabel.Parent = sf3
 
-local userLabel = Instance.new("TextLabel")
+userLabel = Instance.new("TextLabel")
 userLabel.Size = UDim2.new(1, 0, 0.05, 0)
 userLabel.Position = UDim2.new(0, 0, 0.26, 0)
 userLabel.BackgroundTransparency = 1
@@ -770,7 +770,7 @@ userLabel.TextScaled = true
 userLabel.Font = Enum.Font.SourceSans
 userLabel.Parent = sf3
 
-local function createTargetButton(name, xPos, yPos)
+function createTargetButton(name, xPos, yPos)
 local btn = Instance.new("TextButton")
 btn.Size = UDim2.new(0.15, 0, 0.06, 0)
 btn.Position = UDim2.new(xPos, 0, yPos, 0)
@@ -785,30 +785,30 @@ Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
 return btn
 end
 
-local viewButton = createTargetButton("View", 0.02, 0.35)
-local teleportButton = createTargetButton("Teleport", 0.19, 0.35)
-local bangButton = createTargetButton("Bang", 0.36, 0.35)
-local headbangButton = createTargetButton("Head", 0.53, 0.35)
-local nvButton = createTargetButton("NV", 0.02, 0.43) -- Target NV
-local reButton = createTargetButton("Re", 0.19, 0.43)
-local copy1Button = createTargetButton("C1", 0.36, 0.43)
-local copy2Button = createTargetButton("C2", 0.53, 0.43)
+viewButton = createTargetButton("View", 0.02, 0.35)
+teleportButton = createTargetButton("Teleport", 0.19, 0.35)
+bangButton = createTargetButton("Bang", 0.36, 0.35)
+headbangButton = createTargetButton("Head", 0.53, 0.35)
+nvButton = createTargetButton("NV", 0.02, 0.43) -- Target NV
+reButton = createTargetButton("Re", 0.19, 0.43)
+copy1Button = createTargetButton("C1", 0.36, 0.43)
+copy2Button = createTargetButton("C2", 0.53, 0.43)
 
-local selectedPlayer = nil
-local isViewing = false
-local isNV = false
-local isRe = false
-local isCopy1 = false
-local isCopy2 = false
-local nvLoop = nil
-local reLoop = nil
-local copy1Loop = nil
-local copy2Loop = nil
-local playerLeaveData = {}
-local leftPlayersData = {}
-local leavePopup = nil
+selectedPlayer = nil
+isViewing = false
+isNV = false
+isRe = false
+isCopy1 = false
+isCopy2 = false
+nvLoop = nil
+reLoop = nil
+copy1Loop = nil
+copy2Loop = nil
+playerLeaveData = {}
+leftPlayersData = {}
+leavePopup = nil
 
-local function updateTargetUI(plr)
+function updateTargetUI(plr)
 if plr then
 if isPlayerOwner(plr) then
 ShowPopupMessage("Error 404 : this is Owner Script Damin", 4, Color3.fromRGB(255, 0, 0))
@@ -831,7 +831,7 @@ end
 
 end
 
-local function ShowLeavePopup(plr, leaveCount)
+function ShowLeavePopup(plr, leaveCount)
 if leavePopup then
 leavePopup:Destroy()
 end
@@ -902,7 +902,7 @@ end)
 
 end
 
-local function ResetTargetActions()
+function ResetTargetActions()
 if isRe then
 isRe = false
 if reLoop then safeCancel(reLoop) end
@@ -1189,9 +1189,9 @@ end
 end)
 
 -- HD
-local sf4 = sectionFrames[table.find(sections, "HD")]
+sf4 = sectionFrames[table.find(sections, "HD")]
 
-local cmdBox = Instance.new("TextBox")
+cmdBox = Instance.new("TextBox")
 cmdBox.Size = UDim2.new(1, -20, 0.15, 0)
 cmdBox.Position = UDim2.new(0, 10, 0.02, 0)
 cmdBox.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
@@ -1205,7 +1205,7 @@ cmdBox.TextSize = 16
 cmdBox.Parent = sf4
 Instance.new("UICorner", cmdBox).CornerRadius = UDim.new(0, 10)
 
-local hdSpeedBox = Instance.new("TextBox")
+hdSpeedBox = Instance.new("TextBox")
 hdSpeedBox.Size = UDim2.new(0.35, 0, 0.12, 0)
 hdSpeedBox.Position = UDim2.new(0.05, 0, 0.2, 0)
 hdSpeedBox.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
@@ -1219,7 +1219,7 @@ hdSpeedBox.TextSize = 16
 hdSpeedBox.Parent = sf4
 Instance.new("UICorner", hdSpeedBox).CornerRadius = UDim.new(0, 10)
 
-local hdSendButton = Instance.new("TextButton")
+hdSendButton = Instance.new("TextButton")
 hdSendButton.Size = UDim2.new(0.25, 0, 0.12, 0)
 hdSendButton.Position = UDim2.new(0.45, 0, 0.2, 0)
 hdSendButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
@@ -1231,7 +1231,7 @@ hdSendButton.Font = Enum.Font.SourceSansBold
 hdSendButton.Parent = sf4
 Instance.new("UICorner", hdSendButton).CornerRadius = UDim.new(0, 10)
 
-local hdSpamButton = Instance.new("TextButton")
+hdSpamButton = Instance.new("TextButton")
 hdSpamButton.Size = UDim2.new(0.25, 0, 0.12, 0)
 hdSpamButton.Position = UDim2.new(0.72, 0, 0.2, 0)
 hdSpamButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
@@ -1243,8 +1243,8 @@ hdSpamButton.Font = Enum.Font.SourceSansBold
 hdSpamButton.Parent = sf4
 Instance.new("UICorner", hdSpamButton).CornerRadius = UDim.new(0, 10)
 
-local isHdSpamming = false
-local hdLoop = nil
+isHdSpamming = false
+hdLoop = nil
 
 hdSendButton.MouseButton1Click:Connect(function()
 local cmd = cmdBox.Text
@@ -1279,7 +1279,7 @@ end)
 ShowScriptMessage("HD Spam started", 3)
 end)
 
-local cmdBarButton = Instance.new("TextButton")
+cmdBarButton = Instance.new("TextButton")
 cmdBarButton.Size = UDim2.new(0.25, 0, 0.12, 0)
 cmdBarButton.Position = UDim2.new(0.37, 0, 0.4, 0)
 cmdBarButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
@@ -1291,7 +1291,7 @@ cmdBarButton.Font = Enum.Font.SourceSansBold
 cmdBarButton.Parent = sf4
 Instance.new("UICorner", cmdBarButton).CornerRadius = UDim.new(0, 10)
 
-local cmdBarInstances = {}
+cmdBarInstances = {}
 
 cmdBarButton.MouseButton1Click:Connect(function()
 local cmdBarGui = Instance.new("ScreenGui")
@@ -1423,7 +1423,7 @@ end)
 end)
 
 -- Section navigation helper
-local function switchSectionByName(sectionName)
+function switchSectionByName(sectionName)
     for i, name in ipairs(sections) do
         if name == sectionName then
             currentSection = i
@@ -1441,13 +1441,13 @@ local function switchSectionByName(sectionName)
 end
 
 -- Separate Protection Control Center. It is not a sidebar section.
-local protectionGui = nil
-local protectionFrame = nil
-local protectionRenderConnection = nil
-local antiNPEnabled = false
-local antiWarpEnabled = false
+protectionGui = nil
+protectionFrame = nil
+protectionRenderConnection = nil
+antiNPEnabled = false
+antiWarpEnabled = false
 
-local function nukeAndReplaceProtectionCamera()
+function nukeAndReplaceProtectionCamera()
 local oldCam = Workspace.CurrentCamera
 if not oldCam then return end
 local newCam = Instance.new("Camera")
@@ -1463,7 +1463,7 @@ Workspace.CurrentCamera = newCam
 pcall(function() oldCam:Destroy() end)
 end
 
-local function checkAndFixProtectionWarp()
+function checkAndFixProtectionWarp()
 if not antiWarpEnabled then return end
 local camera = Workspace.CurrentCamera
 if not camera then return end
@@ -1480,7 +1480,7 @@ if childName:find("warp", 1, true) or child:IsA("PostEffect") then pcall(functio
 end
 end
 
-local function reduceProtectionMapGraphics()
+function reduceProtectionMapGraphics()
 pcall(function()
 Lighting.GlobalShadows = false
 Lighting.FogEnd = 9e9
@@ -1495,7 +1495,7 @@ end
 end)
 end
 
-local function banishProtectionEntity(entity)
+function banishProtectionEntity(entity)
 if not antiNPEnabled or entity == player.Character then return end
 pcall(function()
 for _, part in ipairs(entity:GetDescendants()) do
@@ -1510,7 +1510,7 @@ entity.Parent = nil
 end)
 end
 
-local function createProtectionControlCenter()
+function createProtectionControlCenter()
 if protectionGui and protectionGui.Parent then
 protectionGui.Enabled = not protectionGui.Enabled
 return
@@ -1606,15 +1606,15 @@ end
 end
 
 -- Anti
-local sf5 = sectionFrames[table.find(sections, "Anti")]
+sf5 = sectionFrames[table.find(sections, "Anti")]
 
-local VoidOriginalPos = nil
-local KillOriginalPos = nil
-local WifiOriginalPos = nil
-local AntiBangOriginalPos = nil
+VoidOriginalPos = nil
+KillOriginalPos = nil
+WifiOriginalPos = nil
+AntiBangOriginalPos = nil
 
 -- دوال مساعدة لإرسال الأوامر بنفس طريقة السكربت المرفق (في الخلفية)
-local function clickButton(button)
+function clickButton(button)
 if typeof(firesignal) == "function" then
 local success = pcall(function()
 firesignal(button.MouseButton1Click)
@@ -1641,7 +1641,7 @@ return false
 
 end
 
-local function sendSkinCommand(name)
+function sendSkinCommand(name)
 pcall(function()
 local ScreenGui = player.PlayerGui:FindFirstChild("ScreenGui")
 if not ScreenGui then return end
@@ -1675,7 +1675,7 @@ end)
 
 end
 
-local antiButtonsData = {
+antiButtonsData = {
 {"anticopy", 0.02, 0.45},
 {"antiafk", 0.02, 0.30},
 {"antivoid", 0.52, 0.30},
@@ -1687,7 +1687,7 @@ local antiButtonsData = {
 {"AntiNv", 0.28, 0.60}
 }
 
-local function createAntiButton(name, xPos, yPos)
+function createAntiButton(name, xPos, yPos)
 local btn = Instance.new("TextButton")
 btn.Size = UDim2.new(name == "AntiNv" and 0.9 or 0.45, 0, 0.09, 0)
 btn.Position = UDim2.new(name == "AntiNv" and 0.05 or xPos, 0, name == "AntiNv" and 0.75 or yPos, 0)
@@ -2026,9 +2026,9 @@ createAntiButton(data[1], data[2], data[3])
 end
 
 -- Near
-local sf6 = sectionFrames[table.find(sections, "Near")]
+sf6 = sectionFrames[table.find(sections, "Near")]
 
-local nearCmdBox = Instance.new("TextBox")
+nearCmdBox = Instance.new("TextBox")
 nearCmdBox.Size = UDim2.new(1, -20, 0.15, 0)
 nearCmdBox.Position = UDim2.new(0, 10, 0.02, 0)
 nearCmdBox.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
@@ -2042,7 +2042,7 @@ nearCmdBox.TextSize = 16
 nearCmdBox.Parent = sf6
 Instance.new("UICorner", nearCmdBox).CornerRadius = UDim.new(0, 10)
 
-local nearSpeedBox = Instance.new("TextBox")
+nearSpeedBox = Instance.new("TextBox")
 nearSpeedBox.Size = UDim2.new(0.35, 0, 0.12, 0)
 nearSpeedBox.Position = UDim2.new(0.05, 0, 0.2, 0)
 nearSpeedBox.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
@@ -2056,7 +2056,7 @@ nearSpeedBox.TextSize = 16
 nearSpeedBox.Parent = sf6
 Instance.new("UICorner", nearSpeedBox).CornerRadius = UDim.new(0, 10)
 
-local nearSendButton = Instance.new("TextButton")
+nearSendButton = Instance.new("TextButton")
 nearSendButton.Size = UDim2.new(0.25, 0, 0.12, 0)
 nearSendButton.Position = UDim2.new(0.45, 0, 0.2, 0)
 nearSendButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
@@ -2068,7 +2068,7 @@ nearSendButton.Font = Enum.Font.SourceSansBold
 nearSendButton.Parent = sf6
 Instance.new("UICorner", nearSendButton).CornerRadius = UDim.new(0, 10)
 
-local nearSpamButton = Instance.new("TextButton")
+nearSpamButton = Instance.new("TextButton")
 nearSpamButton.Size = UDim2.new(0.25, 0, 0.12, 0)
 nearSpamButton.Position = UDim2.new(0.72, 0, 0.2, 0)
 nearSpamButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
@@ -2080,7 +2080,7 @@ nearSpamButton.Font = Enum.Font.SourceSansBold
 nearSpamButton.Parent = sf6
 Instance.new("UICorner", nearSpamButton).CornerRadius = UDim.new(0, 10)
 
-local nearAuraButton = Instance.new("TextButton")
+nearAuraButton = Instance.new("TextButton")
 nearAuraButton.Size = UDim2.new(0.25, 0, 0.12, 0)
 nearAuraButton.Position = UDim2.new(0.02, 0, 0.38, 0)
 nearAuraButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
@@ -2092,7 +2092,7 @@ nearAuraButton.Font = Enum.Font.SourceSansBold
 nearAuraButton.Parent = sf6
 Instance.new("UICorner", nearAuraButton).CornerRadius = UDim.new(0, 10)
 
-local nearReButton = Instance.new("TextButton")
+nearReButton = Instance.new("TextButton")
 nearReButton.Size = UDim2.new(0.25, 0, 0.12, 0)
 nearReButton.Position = UDim2.new(0.3, 0, 0.38, 0)
 nearReButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
@@ -2104,7 +2104,7 @@ nearReButton.Font = Enum.Font.SourceSansBold
 nearReButton.Parent = sf6
 Instance.new("UICorner", nearReButton).CornerRadius = UDim.new(0, 10)
 
-local nearStatus = Instance.new("TextLabel")
+nearStatus = Instance.new("TextLabel")
 nearStatus.Size = UDim2.new(1, 0, 0.08, 0)
 nearStatus.Position = UDim2.new(0, 0, 0.55, 0)
 nearStatus.BackgroundTransparency = 1
@@ -2115,14 +2115,14 @@ nearStatus.TextScaled = true
 nearStatus.Font = Enum.Font.SourceSans
 nearStatus.Parent = sf6
 
-local nearSpamActive = false
-local nearAuraActive = false
-local nearReActive = false
-local nearSpamLoop = nil
-local nearAuraLoop = nil
-local nearReLoop = nil
+nearSpamActive = false
+nearAuraActive = false
+nearReActive = false
+nearSpamLoop = nil
+nearAuraLoop = nil
+nearReLoop = nil
 
-local function sendToNearPlayers(cmd)
+function sendToNearPlayers(cmd)
 local near = getNearPlayers()
 if #near == 0 then
 ShowPopupMessage("No near players found!", 2, Color3.fromRGB(255, 200, 0))
@@ -2231,9 +2231,9 @@ end
 end)
 
 -- SQR
-local sf8 = sectionFrames[table.find(sections, "SQR")]
+sf8 = sectionFrames[table.find(sections, "SQR")]
 
-local infoText = Instance.new("TextLabel")
+infoText = Instance.new("TextLabel")
 infoText.Size = UDim2.new(1, -20, 0.85, 0)
 infoText.Position = UDim2.new(0, 10, 0.01, 0)
 infoText.BackgroundTransparency = 1
@@ -2263,7 +2263,7 @@ infoText.TextWrapped = true
 infoText.TextXAlignment = Enum.TextXAlignment.Center
 infoText.Parent = sf8
 
-local discordBtn = Instance.new("TextButton")
+discordBtn = Instance.new("TextButton")
 discordBtn.Size = UDim2.new(0.3, 0, 0.06, 0)
 discordBtn.Position = UDim2.new(0.35, 0, 0.92, 0)
 discordBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
@@ -2283,7 +2283,7 @@ end)
 --====================================================
 -- SETTING
 --====================================================
-local sfSetting = sectionFrames[table.find(sections, "Setting")]
+sfSetting = sectionFrames[table.find(sections, "Setting")]
 
 if sfSetting then
     sfSetting.ClipsDescendants = true
@@ -2889,8 +2889,8 @@ if sfSetting then
 end
 
 -- VIP
-local sfVip = nil
-local vipIndex = nil
+sfVip = nil
+vipIndex = nil
 
 for i, name in ipairs(sections) do
 if name == "VIP" then
@@ -3097,8 +3097,8 @@ Players.PlayerRemoving:Connect(updateFreeList)
 end
 
 -- Owner
-local sfOwner = nil
-local ownerIndex = nil
+sfOwner = nil
+ownerIndex = nil
 
 for i, name in ipairs(sections) do
 if name == "Owner" then
@@ -3247,7 +3247,7 @@ installButtonFeedback(gui)
 installButtonFeedback(screenGui)
 
 -- زر إغلاق
-local closeBtn = Instance.new("TextButton")
+closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 30, 0, 30)
 closeBtn.Position = UDim2.new(1, -40, 0, 2)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
